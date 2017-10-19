@@ -1,0 +1,59 @@
+---
+title: "Foundations of Data Science: Exercise 4 - Titanic data visualisation"
+author: "James Hooi"
+date: "October 19, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+# Set working directory
+setwd("C:\\Users\\james.hooi\\Documents\\data analytics\\Springboard FDS exercises\\Ex4.0.1 Exploratory Data Viz\\FDS-Ex4-titanic")
+# Get data and clean it
+titanic.clean <- read.csv(file = paste(getwd(),"titanic_clean.csv",sep="\\"))
+titanic <- titanic.clean %>% 
+  select(Survived = survived, Pclass = pclass, Sex = sex, Age = age)
+titanic <- titanic %>% filter(Sex != "")  
+```
+
+## Titanic: exploratory data visualisations
+
+Using cleaned data from Ex 3.1.2, note there are more records in this dataset than the Data Camp version.
+
+###1. Check the structure of the data
+```{r task1}
+str(titanic)
+```
+
+###2. Plot bar graph of passenger survival by class and by sex
+```{r task2}
+ggplot(titanic, aes(x = Pclass, fill = Sex)) + 
+  geom_bar(position = "dodge") +
+  labs(x = "Passenger Class", y = "Count", title = "Bar plot: Passenger survival by class, by sex")
+```
+
+###3. Plot bar graph of passenger survival by class and by sex, faceted by survival
+```{r task3}
+ggplot(titanic, aes(x = Pclass, fill = Sex)) + 
+  geom_bar(position = "dodge") +
+  facet_grid(. ~ Survived) +
+  labs(x = "Passenger Class", y = "Count", title = "Bar plot: Passenger survival by class, by sex"
+       , subtitle = "LHS: did not survive, RHS: survived")
+```
+
+###4. & 5. Define jitter-dodge position for dot plot and draw
+- Passenger survival by class, by sex, by age
+- Faceted by survival
+```{r task5}
+posn.jd <- position_jitterdodge(0.5, 0, 0.6)
+
+ggplot(titanic, aes(x = Pclass, y=Age, col = Sex)) + 
+  geom_point(position = posn.jd, size=3, alpha=0.5) +
+  facet_grid(. ~ Survived) +
+  labs(x = "Passenger Class", title = "Dot plot: Passenger survival by class, by sex, by age"
+       , subtitle = "LHS: did not survive, RHS: survived")
+```
+
